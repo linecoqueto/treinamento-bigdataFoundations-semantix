@@ -1,0 +1,63 @@
+---- PREPARANDO O AMBIENTE
+
+--retornar todos os comandos que posso executar
+docker --help
+
+--versão do docker
+docker --version
+
+--versao do docker-compose
+docker-compose --version
+
+--> Subir cluster
+
+--Executar os containers/serviços em backgroud (-d):
+docker-compose up -d
+
+--Parar os serviços
+docker-compose stop
+
+--Iniciar os serviços
+docker-compose start
+
+--lista os containers
+docker container ls
+
+----> Termino do treinamento / ou cluster parou de funcionar:
+
+--Matar os serviços
+docker-compose down
+
+--apagar todos os volumes sem uso
+docker volume prune
+
+--apagar tudo (image, volume, network)
+docker system prune --all
+
+
+----> Acessos ambiente docker'
+
+--Visualizer os container
+docker ps --ativos
+
+docker ps -all
+
+--Executar comandos no container
+docker exec -it <container><comando>
+
+--Visualizar os logs
+docker logs <container>
+
+docker-compose logs --visualizar log de tudo
+
+docker-compose logs -f --visualizar logs do que esta acontecendo, acompanhar execucao
+
+--Enviar arquivos
+docker cp <diretorio> <container>:/<diretorio>
+
+--Acesso o container namenode
+docker exec -it namenode bash
+
+--Acesso o container do hive
+docker exec -it hive-server bash
+

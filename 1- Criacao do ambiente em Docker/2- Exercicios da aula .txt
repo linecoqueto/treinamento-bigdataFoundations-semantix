@@ -1,0 +1,94 @@
+##---------------------------------------------------------------
+##1. Instalação do docker e docker-compose
+##---------------------------------------------------------------
+
+Docker: https://docs.docker.com/get-docker/ (Links para um site externo.)
+Docker-compose: https://docs.docker.com/compose/install/ (Links para um site externo.)
+
+
+##---------------------------------------------------------------
+##2. Executar os seguintes comandos, para baixar as imagens do Cluster de Big Data:
+##---------------------------------------------------------------
+
+git clone https://github.com/rodrigo-reboucas/docker-bigdata.git
+cd docker-bigdata
+docker-compose pull
+
+
+##---------------------------------------------------------------
+##3. Iniciar o cluster Hadoop através do docker-compose
+##---------------------------------------------------------------
+
+aline@aline-virtualbox:~/treinamentos/docker-bigdata$ docker-compose up -d
+Building with native build. Learn about native build in Compose here: https://docs.docker.com/go/compose-native-build/
+
+Starting namenode  ... done
+Starting spark        ... done
+Starting zookeeper    ... done
+Starting database     ... done
+Starting hbase-master              ... done
+Starting datanode     ... done
+Starting hive-metastore-postgresql ... done
+Starting hive_metastore            ... done
+Starting hive-server               ... done
+
+
+##---------------------------------------------------------------
+##4. Listas os containers em execução
+##---------------------------------------------------------------
+
+aline@aline-virtualbox:~/treinamentos/docker-bigdata$ docker container ls
+CONTAINER ID   IMAGE                    COMMAND                  CREATED        STATUS                             NAMES
+df065002cdec   fjardim/hive             "entrypoint.sh /bin/…"   17 hours ago   Up 8 seconds                       hive-server
+23e749d0f471   fjardim/hive             "entrypoint.sh /opt/…"   17 hours ago   Up 11 seconds                      hive_metastore
+51f3c4dd2fc6   fjardim/hive-metastore   "/docker-entrypoint.…"   17 hours ago   Up 15 seconds                      hive-metastore-postgresql
+000044bccd81   fjardim/hbase-master     "/entrypoint.sh /run…"   17 hours ago   Up 16 seconds                      hbase-master
+44de0895e24e   fjardim/datanode         "/entrypoint.sh /run…"   17 hours ago   Up 17 seconds (health: starting)   datanode
+e6b69eac9240   fjardim/namenode_sqoop   "/entrypoint.sh /run…"   17 hours ago   Up 21 seconds (health: starting)   namenode
+2d559702f728   fjardim/mysql            "docker-entrypoint.s…"   17 hours ago   Up 18 seconds                      database
+80c3609dabfc   fjardim/zookeeper        "/bin/sh -c '/usr/sb…"   17 hours ago   Up 19 seconds                      zookeeper
+3afcb1007961   fjardim/jupyter-spark    "/opt/docker/bin/ent…"   17 hours ago   Up 18 seconds                      spark
+
+
+##---------------------------------------------------------------
+##5. Verificar os logs dos containers do docker-compose em execução
+##---------------------------------------------------------------
+
+aline@aline-virtualbox:~/treinamentos/docker-bigdata$ docker-compose logs
+
+
+##---------------------------------------------------------------
+##6. Verificar os logs do container namenode
+##---------------------------------------------------------------
+
+aline@aline-virtualbox:~/treinamentos/docker-bigdata$ docker logs namenode
+
+
+##---------------------------------------------------------------
+##7.  Acessar o container namenode
+##---------------------------------------------------------------
+
+aline@aline-virtualbox:~/treinamentos/docker-bigdata$ docker exec -it namenode bash
+root@namenode:/# 
+
+
+##---------------------------------------------------------------
+##8. Listar  os diretórios do container namenode
+##---------------------------------------------------------------
+
+root@namenode:/# ls /
+## sair do container namenode :: ctrl+D
+
+##ou
+
+aline@aline-virtualbox:~/treinamentos/docker-bigdata$ docker exec -it namenode ls /
+
+
+##---------------------------------------------------------------
+##9. Parar os containers do Cluster de Big Data
+##---------------------------------------------------------------
+
+aline@aline-virtualbox:~/treinamentos/docker-bigdata$ docker-compose stop
+##sempre fazer o stop ou start na pasta do docker
+
+
