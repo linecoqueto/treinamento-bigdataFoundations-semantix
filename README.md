@@ -1,5 +1,4 @@
-# treinamento-bigdataEngineer-semantix
-Treinamento Big Data Engineer | Semantix Academy
+# Treinamento Big Data Engineer | Semantix Academy
 
 #### Aula 1 : Introdução ao Big Data e Hadoop
 - Conceitos básicos Hadoop, HDFS, Map Reduce e Yarn
