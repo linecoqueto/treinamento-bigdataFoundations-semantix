@@ -1,0 +1,110 @@
+------ Utilizar o comando: hdfs dfs
+
+--> Comando especifico para usar no hdfs
+hdfs dfs -<comando>[argumentos]
+
+----------------------------------------------------------
+-- COMANDOS SISTEMAS HDFS 
+----------------------------------------------------------
+
+--> Exemplo utilizando o comando Help
+hdfs dfs -help
+hdfs dfs -help ls 
+
+--> criar um diretorio
+hdfs dfs -mkdir <diretorio>
+
+--> criar uma estrutura de diretorios "-p"
+hdfs dfs -mkdir -p <diretorio>/<diretorio>/<diretorio> 
+
+--> listar diretorio
+hdfs dfs -ls <diretorio>
+
+--> remocao arquivos e diretorios
+hdfs dfs -rm <src>
+
+--> remover de forma recursiva
+hdfs dfs -rm <src> -r 
+
+--> remover permanentemente o arquivo
+hdfs dfs -rm <src> -skipTrash
+
+----------------------------------------------------------
+-- MANIPULACAO DE DADOS 
+----------------------------------------------------------
+
+--> Enviar dados local para o hdfs
+--##mais usado
+hdfs dfs -put <src> <dst>
+
+--##argumentos que podem ser utilizados:
+--## -f : sobrescreve o destino, se existir
+--## -l : força um fator de replicação de "3", por exemplo
+
+--##outra forma
+hdfs dfs -copyFromLocal <src> <dst>
+
+
+--> receber dados, trazer dados do hdfs para o local
+hdfs dfs -get <src> <dst> -f
+
+hdfs dfs -getmerge <src> <dst>
+
+--##outra forma : ele move apagando a origem
+hdfs dfs -moveToLocal <src> <dst>
+
+
+--> copiar arquivo ou diretorio
+hdfs dfs -cp <src> <dst> -f
+
+hdfs dfs -mv <src> <dst>
+
+
+----------------------------------------------------------
+-- INFORMAÇÕES DE ARQUIVOS
+----------------------------------------------------------
+
+--> uso do disco
+hdfs dfs -du -h <diretorio>
+
+--> espaço livre
+hdfs dfs -df -h <diretorio>
+
+--> mostrar as informações do diretório 
+hdfs dfs -stat <diretorio>
+
+hdfs dfs -stat %r name.txt #fator de replicação
+hdfs dfs -stat %b name.txt #tamanho do bloco
+
+--> conta o numero de diretorios, numero de arquivos e tamanho do arquivo especificado
+hdfs dfs -count -h <diretorio>
+
+--> esvaziar a lixeira
+hdfs dfs -expurge
+
+--> ver conteudo do arquivo
+hdfs dfs -cat <arquivo>
+
+--> alterar o fator de replicação do arquivo
+hdfs dfs -setrep <num de repeticoes> <arquivo>
+
+--> criar um arquivo de registro com data e hora
+hdfs dfs -touchz <diretorio>
+
+--> retornar as info da soma de verificacao de um arquivo 
+-- utilizado para validar info de envio de um arquivo de um lugar para outro
+hdfs dfs -checksum <arquivo>
+
+--> mostrar o ultimo 1KB do arquivo no console:
+hdfs dfs -tail [-f] <arquivo>
+
+hdfs dfs -tail name.txt
+hdfs dfs -cat name.txt | head -n 1
+
+
+--> localizar todos os arquivos que correspondem a expressao
+hdfs dfs -find <caminho> <procura> -print
+
+hdfs dfs -find / -name data ---## "/" indica que vamos procurar desde a raiz
+hdfs dfs -find / -iname Data -print --## nao difere minusculos ou maiusculos
+hdfs dfs -find input/ -name \*.txt -print --##procuro por extensao, nesse exemplo .txt
