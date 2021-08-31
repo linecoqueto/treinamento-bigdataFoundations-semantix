@@ -1,0 +1,124 @@
+----------------------------------------------------------
+-- ACESSANDO O HIVE
+----------------------------------------------------------
+
+docker exec -it hive-server bash
+
+/* beeline --help */
+
+--ambiente de desenvolvimento
+beeline -u jdbc:hive2://localhost:10000 
+
+--sair
+ctrl+D
+
+
+----------------------------------------------------------
+-- COMANDOS BASICOS 
+----------------------------------------------------------
+
+--listar todos os BDs
+show databases;
+
+--descrição do BD
+desc database <nomeDB>;
+
+--listar tabelas
+show tables;
+
+--estrutura da tabelas
+desc <nomeTabela>;
+desc formatted <nomeTabela>; --ver partições, tabela interna ou externa
+desc extended <nomeTabela>;
+
+--criar BD
+create database <nomeBanco>;
+
+--local diferente do conf. Hive
+create database <nomeBanco> location "/diretorio";
+
+--adicionar comentario
+create database <nomeBanco> comment "descrição";
+
+----------------------------------------------------------
+-- TABELA INTERNA E EXTERNA
+----------------------------------------------------------
+
+--tabela interna
+create table user(cod int, name string);
+drop table user; -- apaga os dados e metadados
+
+--tabela externa :: usada para compartilhar os dados com outras ferramentas
+create external table e_user(cod int, name string) location '/user/aline/data_users/';
+drop table e_user; -- apaga apenas os metadados, os dados ficam armazenado no sistema de arquivos.
+
+----------------------------------------------------------
+-- OPCOES LEITURA DE DADOS
+----------------------------------------------------------
+
+--delimitadores
+/*
+	- row format delimited
+	- fields terminated by '<delimitador>'
+	- lines terminated by '<delimitador>'
+	- delimitadores: 'texto teste 12345', \b (backspace), \n (newline), \t (tab)
+*/	
+
+--pular um numero de linhas de leitura do arquivos
+tblproperties("skip.header.line.count"="<numero de linhas>");
+
+--definir localização dos dados (tabela externa)
+location '/user/cloudera/data/client';
+
+
+----------------------------------------------------------
+-- EXEMPLO DE CRIAÇÃO DE TABELA 
+----------------------------------------------------------
+
+create external table user(
+	id int,
+	name String,
+	age int
+)
+row format delimited
+fields terminated by '\t'
+lines terminated by '\n'
+stored as textfile
+location '/user/aine/data/clint';
+
+
+----------------------------------------------------------
+-- INSERÇÃO DE DADOS
+----------------------------------------------------------
+
+insert into table <nomeTabela> partition (<partition>='<value>') values
+(<campo>,<valor>), (<campo>,<valor>), (<campo>,<valor>);
+
+
+----------------------------------------------------------
+-- CARREGAMENTO DADOS
+----------------------------------------------------------
+
+hive> load data [local] inpath '<diretorio>' [overwrite] into table <nomeTabela>;
+
+---- Aceita apenas ANSI JOINS (inner join, left outer, right outer, full outer)
+
+
+----------------------------------------------------------
+-- CRIAR VIEWS
+----------------------------------------------------------
+
+create view <nomeView> as select * from nome_table;
+
+
+----------------------------------------------------------
+-- SELEÇÃO DE DADOS
+----------------------------------------------------------
+
+select * from <nomeTable>
+<where>
+<group by>
+<having>
+<order by>
+<limit n>;
+
