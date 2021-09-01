@@ -1,0 +1,146 @@
+##---------------------------------------------------------------
+#1. Selecionar os 10 primeiros registros da tabela nascimento pelo ano de 2016
+##---------------------------------------------------------------
+
+0: jdbc:hive2://localhost:10000> select * from tb_ext_nascimento where ano = 2016 limit 10;
+
++-------------------------+-------------------------+-------------------------------+------------------------+
+| tb_ext_nascimento.nome  | tb_ext_nascimento.sexo  | tb_ext_nascimento.frequencia  | tb_ext_nascimento.ano  |
++-------------------------+-------------------------+-------------------------------+------------------------+
+| Emma                    | F                       | 19471                         | 2016                   |
+| Olivia                  | F                       | 19327                         | 2016                   |
+| Ava                     | F                       | 16283                         | 2016                   |
+| Sophia                  | F                       | 16112                         | 2016                   |
+| Isabella                | F                       | 14772                         | 2016                   |
+| Mia                     | F                       | 14415                         | 2016                   |
+| Charlotte               | F                       | 13080                         | 2016                   |
+| Abigail                 | F                       | 11747                         | 2016                   |
+| Emily                   | F                       | 10957                         | 2016                   |
+| Harper                  | F                       | 10773                         | 2016                   |
++-------------------------+-------------------------+-------------------------------+------------------------+
+10 rows selected (21.65 seconds)
+
+
+##---------------------------------------------------------------
+#2. Contar a quantidade de nomes de crianças nascidas em 2017
+##---------------------------------------------------------------
+
+0: jdbc:hive2://localhost:10000> select count(nome) from tb_ext_nascimento where ano=2017;
+
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
++--------+
+|  _c0   |
++--------+
+| 32469  |
++--------+
+1 row selected (3.391 seconds)
+
+
+##---------------------------------------------------------------
+#3. Contar a quantidade de crianças nascidas em 2017
+##---------------------------------------------------------------
+
+0: jdbc:hive2://localhost:10000> select sum(frequencia) from tb_ext_nascimento where ano=2017;
+
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
++----------+
+|   _c0    |
++----------+
+| 3546301  |
++----------+
+1 row selected (2.503 seconds)
+
+
+##---------------------------------------------------------------
+#4. Contar a quantidade de crianças nascidas por sexo no ano de 2015
+##---------------------------------------------------------------
+
+0: jdbc:hive2://localhost:10000> select sum(frequencia) qtd_crianca, sexo from tb_ext_nascimento where ano=2015 group by sexo;
+
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
++--------------+-------+
+| qtd_crianca  | sexo  |
++--------------+-------+
+| 1778883      | F     |
+| 1909804      | M     |
++--------------+-------+
+2 rows selected (1.97 seconds)
+
+
+##---------------------------------------------------------------
+#5. Mostrar por ordem de ano decrescente a quantidade de crianças nascidas por sexo
+##---------------------------------------------------------------
+
+0: jdbc:hive2://localhost:10000> select sum(frequencia) qtd_crianca, sexo, ano from tb_ext_nascimento group by sexo, ano order  by ano desc;
+
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
++--------------+-------+-------+
+| qtd_crianca  | sexo  |  ano  |
++--------------+-------+-------+
+| 1834490      | M     | 2017  |
+| 1711811      | F     | 2017  |
+| 1889052      | M     | 2016  |
+| 1763916      | F     | 2016  |
+| 1909804      | M     | 2015  |
+| 1778883      | F     | 2015  |
++--------------+-------+-------+
+6 rows selected (3.948 seconds)
+
+
+##---------------------------------------------------------------
+#6. Mostrar por ordem de ano decrescente a quantidade de crianças nascidas por sexo com o nome iniciado com ‘A’
+##---------------------------------------------------------------
+
+0: jdbc:hive2://localhost:10000> select sum(frequencia) qtd_crianca, sexo, ano from tb_ext_nascimento where nome like 'A%' group by sexo, ano order  by ano desc;
+
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
++--------------+-------+-------+
+| qtd_crianca  | sexo  |  ano  |
++--------------+-------+-------+
+| 185566       | M     | 2017  |
+| 308551       | F     | 2017  |
+| 191854       | M     | 2016  |
+| 324185       | F     | 2016  |
+| 194722       | M     | 2015  |
+| 329690       | F     | 2015  |
++--------------+-------+-------+
+6 rows selected (4.055 seconds)
+
+
+##---------------------------------------------------------------
+#7. Qual nome e quantidade das 5 crianças mais nascidas em 2016
+##---------------------------------------------------------------
+
+0: jdbc:hive2://localhost:10000> select max(frequencia) qtd, nome from tb_ext_nascimento where ano = 2016 group by nome order by qtd desc limit 5;
+
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
++--------+---------+
+|  qtd   |  nome   |
++--------+---------+
+| 19471  | Emma    |
+| 19327  | Olivia  |
+| 19082  | Noah    |
+| 18198  | Liam    |
+| 16283  | Ava     |
++--------+---------+
+5 rows selected (5.027 seconds)
+
+
+##---------------------------------------------------------------
+#8. Qual nome e quantidade das 5 crianças mais nascidas em 2016 do sexo masculino e feminino
+##---------------------------------------------------------------
+
+0: jdbc:hive2://localhost:10000> select max(frequencia) qtd, nome, sexo from tb_ext_nascimento where ano = 2016 group by nome, sexo order by qtd desc limit 5;
+
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
++--------+---------+-------+
+|  qtd   |  nome   | sexo  |
++--------+---------+-------+
+| 19471  | Emma    | F     |
+| 19327  | Olivia  | F     |
+| 19082  | Noah    | M     |
+| 18198  | Liam    | M     |
+| 16283  | Ava     | F     |
++--------+---------+-------+
+5 rows selected (5.294 seconds)
+0: jdbc:hive2://localhost:10000> 

@@ -1,0 +1,49 @@
+-- TABELA NÃO PARTICIONADA :: consultas precisam varrer todos os arquivos no diretorio, que é um processo lento para big table
+
+-- TABELA PARTICIONADA :: consultas podem varrer os arquivos de uma partição. Usar os campos com registros duplicados para usar para particionar - fatias horizontais de dados, separadas por partes. ex estado, genero, categoria, classe, etc.
+		/*
+			- partição:
+				* um campo que não está na estrutura da tabela
+				* partição é apenas uma forma de organizar os dados
+				* partitioned by (<campo><type>)
+				
+				
+			- bucket:
+				* quantidade que os dados serão divididos em cada partição
+				* campo precisa estar na estrutura da tabela
+				* clustered by (<campo>) into <qtd> buckets
+		*/
+		
+-->> Exemplo::		
+		
+create table user(
+	id int,
+	name String,
+	age int
+)
+partitioned by (data String)
+clustered by (id) into 4 buckets;
+
+-- por padrão, o particionamento dinamico está desativado, para ativar:
+	set hive.exec.dynamic.partition = true;
+	set hive.exec.dynamic.partition.mode = nonstrict; 
+	
+-- visualizar partições de uma tabela
+hive> show partitions user;
+
+--excluir partições de uma tabela
+hive> alter table user drop partition (city='SP');
+
+-- alterar nome da partição de uma tabela
+hive> alter table user partition city rename to partition state;
+
+------>>> toda vez que for apagar partição fazer via hive, NUNCA pelo HDFS
+
+----------------------------------------------------------
+-- REPARAR TABELA
+----------------------------------------------------------
+
+-- Quando a tabela não encontra a partição
+-- Sincronizar a tabela com o metastore
+
+msck repair table <nomeTabela>
