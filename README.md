@@ -1,23 +1,33 @@
 # Treinamento Big Data Engineer | Semantix Academy
 
-#### Aula 1 : Introdução ao Big Data e Hadoop
+#### Introdução ao Big Data e Hadoop
 - Conceitos básicos Hadoop, HDFS, Map Reduce e Yarn
-
-#### Aula 2 : Introdução ao Docker
 - Conceitos do docker
 - Configuração do ambiente big data hadoop usando o docker
 
-#### Aula 3 : Introdução ao Hadoop
+#### Hadoop
 - Comandos sistemas HDFS
 - Manipulação de dados
 - Consultar informações de arquivos
 
-#### Aula 4 : Hive básico
+#### Hive
 - Conceitos Hive
 - Criação do BD e tabela
 - Carregar dados
 - Consultar dados
-
-#### Aula 5 : Hive particionamento
 - Conceitos particionamento
 - Reparar tabela
+ - Formato de arquivos
+ - Compressão de Arquivos
+
+#### Sqoop
+- Conceitos básicos
+- Comandos básicos
+- Importação de dados
+- Paralelismo
+- Valores Nulos
+- Jobs
+- Carga incremental
+- Exportação de dados
+
+#### Hbase
