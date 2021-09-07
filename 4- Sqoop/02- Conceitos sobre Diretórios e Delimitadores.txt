@@ -1,0 +1,40 @@
+
+----------------------------------------------------------
+-- IMPORTAR DIRETORIO DIFERENTE
+----------------------------------------------------------
+
+---> usando o target-dir : armazenar em um diretorio especifico (direto no diretorio que especifiquei)
+sqoop import ...
+--target-dir /user/root/db
+
+--> usando o warehouse-dir : armazenar em um diretorio base (vai criar um outro diretorio que especifiquei)
+sqoop import ...
+--warehouse-dir /user/root/db
+
+
+----------------------------------------------------------
+-- IMPORTAR DIRETORIO EXISTENTE : 
+-- O sqoop falha a importação se o diretorio de destino ja exitir
+----------------------------------------------------------
+
+---> delete-target-dir : sobrescrever o diretorio
+sqoop import ...
+--wharehouse-dir /user/cloudera/db -delete-target-dir
+
+
+--> append : anexar os dados no diretório existente
+sqoop import ...
+--wharehouse-dir /user/cloudera/db append
+
+
+----------------------------------------------------------
+-- DIFERENTES DELIMITADORES
+----------------------------------------------------------
+
+--fields-terminated-by <delimitador>
+--lines-terminated-by <delimitador>
+
+'qualquer coisa', \b (backspace), \n (newline), \t (tab), \0 (NULL)
+
+sqoop import ...
+--fields-terminated-by '\t' --lines-terminated-by '&'

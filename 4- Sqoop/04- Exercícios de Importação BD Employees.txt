@@ -1,0 +1,124 @@
+
+##---------------------------------------------------------------
+##1. Pesquisar os 10 primeiros registros da tabela employees do banco de dados employees
+##---------------------------------------------------------------
+
+sqoop eval \
+--connect jdbc:mysql://database/employees \
+--username root \
+--password secret \
+--query "SELECT * FROM employees limit 10"
+
+---------------------------------------------------------------------------------
+| emp_no      | birth_date | first_name     | last_name        | gender | hire_date  | 
+---------------------------------------------------------------------------------
+| 10001       | 1953-09-02 | Georgi         | Facello          | M | 1986-06-26 | 
+| 10002       | 1964-06-02 | Bezalel        | Simmel           | F | 1985-11-21 | 
+| 10003       | 1959-12-03 | Parto          | Bamford          | M | 1986-08-28 | 
+| 10004       | 1954-05-01 | Chirstian      | Koblick          | M | 1986-12-01 | 
+| 10005       | 1955-01-21 | Kyoichi        | Maliniak         | M | 1989-09-12 | 
+| 10006       | 1953-04-20 | Anneke         | Preusig          | F | 1989-06-02 | 
+| 10007       | 1957-05-23 | Tzvetan        | Zielinski        | F | 1989-02-10 | 
+| 10008       | 1958-02-19 | Saniya         | Kalloufi         | M | 1994-09-15 | 
+| 10009       | 1952-04-19 | Sumant         | Peac             | F | 1985-02-18 | 
+| 10010       | 1963-06-01 | Duangkaew      | Piveteau         | F | 1989-08-24 | 
+---------------------------------------------------------------------------------
+
+
+##---------------------------------------------------------------
+##2. Realizar as importações referentes a tabela employees e para validar cada questão,  é necessário visualizar no HDFS*
+
+* Dica para visualizar no HDFS:
+
+$ hdfs dfs -cat /.../db_test/nomeTabela/part-m-00000 | head -n 5
+##---------------------------------------------------------------
+
+#a- Importar a tabela employees, no warehouse  /user/hive/warehouse/db_test_a
+
+sqoop import --table employees \
+--connect jdbc:mysql://database/employees \
+--username root \
+--password secret \
+--warehouse-dir /user/hive/warehouse/db_test_a
+
+21/09/03 17:54:47 INFO mapreduce.ImportJobBase: Transferred 33.0482 MB in 106.2058 seconds (318.6399 KB/sec)
+21/09/03 17:54:47 INFO mapreduce.ImportJobBase: Retrieved 300024 records.
+
+
+root@namenode:/# hdfs dfs -ls /user/hive/warehouse/db_test_a
+Found 1 items
+drwxr-xr-x   - root supergroup          0 2021-09-03 17:54 /user/hive/warehouse/db_test_a/employees
+
+
+root@namenode:/# hdfs dfs -cat /user/hive/warehouse/db_test_a/employees/part-m-00000 | head -n 3
+10001,1953-09-02,Georgi,Facello,M,1986-06-26
+10002,1964-06-02,Bezalel,Simmel,F,1985-11-21
+10003,1959-12-03,Parto,Bamford,M,1986-08-28
+
+
+--
+
+#b- Importar todos os funcionários do gênero masculino, no warehouse  /user/hive/warehouse/db_test_b
+
+sqoop import --table employees \
+--connect jdbc:mysql://database/employees \
+--username root \
+--password secret \
+--where "gender='M'" \
+--warehouse-dir /user/hive/warehouse/db_test_b
+
+21/09/03 18:40:17 INFO mapreduce.ImportJobBase: Transferred 19.8151 MB in 73.5841 seconds (275.7473 KB/sec)
+21/09/03 18:40:17 INFO mapreduce.ImportJobBase: Retrieved 179973 records.
+
+
+hdfs dfs -ls /user/hive/warehouse/db_test_b
+drwxr-xr-x   - root supergroup          0 2021-09-03 18:40 /user/hive/warehouse/db_test_b/employees
+
+
+root@namenode:/# hdfs dfs -cat /user/hive/warehouse/db_test_b/employees/part-m-00000 | head -n 3
+10001,1953-09-02,Georgi,Facello,M,1986-06-26
+10003,1959-12-03,Parto,Bamford,M,1986-08-28
+10004,1954-05-01,Chirstian,Koblick,M,1986-12-01
+
+
+--
+
+#c- importar o primeiro e o último nome dos funcionários com os campos separados por tabulação, no warehouse  /user/hive/warehouse/db_test_c
+
+sqoop import --table employees \
+--connect jdbc:mysql://database/employees \
+--username root \
+--password secret \
+--columns "first_name, last_name" \
+--fields-terminated-by '\t' \
+--warehouse-dir /user/hive/warehouse/db_test_c
+
+21/09/03 18:46:58 INFO mapreduce.ImportJobBase: Transferred 11.068 MB in 86.6318 seconds (130.8248 KB/sec)
+21/09/03 18:46:58 INFO mapreduce.ImportJobBase: Retrieved 300024 records.
+
+
+hdfs dfs -ls /user/hive/warehouse/db_test_c
+Found 1 items
+drwxr-xr-x   - root supergroup          0 2021-09-03 18:46 /user/hive/warehouse/db_test_c/employees
+
+hdfs dfs -cat /user/hive/warehouse/db_test_c/employees/part-m-00000 | head -n 3
+
+
+--
+
+#d- Importar o primeiro e o último nome dos funcionários com as linhas separadas por “ : ” e salvar no mesmo diretório da questão 2.C
+
+sqoop import --table employees \
+--connect jdbc:mysql://database/employees \
+--username root \
+--password secret \
+--columns "first_name, last_name" \
+--lines-terminated-by ':' \
+--warehouse-dir /user/hive/warehouse/db_test_c -delete-target-dir
+
+21/09/03 18:54:20 INFO mapreduce.ImportJobBase: Transferred 11.068 MB in 93.4902 seconds (121.2274 KB/sec)
+21/09/03 18:54:20 INFO mapreduce.ImportJobBase: Retrieved 300024 records.
+
+
+hdfs dfs -cat /user/hive/warehouse/db_test_c/employees/part-m-00000 | head -n 3
+

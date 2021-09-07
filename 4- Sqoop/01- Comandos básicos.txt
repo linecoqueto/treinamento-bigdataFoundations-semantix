@@ -1,0 +1,85 @@
+----------------------------------------------------------
+-- COMANDOS BÁSICOS
+----------------------------------------------------------
+
+$ sqoop <comando>
+
+--verificar versao
+sqoop version
+
+--listar todos os comandos
+sqoop help
+
+--ajuda de um comando
+sqoop help import
+
+--importar todas as tabelas de um BD
+sqoop import-all-tables...
+
+--acessar o sqoop
+docker exec -it namenode bash
+
+sqoop version
+
+----------------------------------------------------------
+-- EXEMPLOS
+----------------------------------------------------------
+
+--> listar banco de dados
+
+$sqoop list-databases \
+--connect jdbc:mysql://database \
+--username usuario \
+--password senha
+
+
+--> listar tables
+
+$sqoop list-tables \
+--connect jdbc:mysql://database/employees \
+--username usuario \
+--password senha
+
+
+--> consultar consultas utilizando o eval
+
+$sqoop eval \
+--connect jdbc:mysql://database/employees \
+--username usuario \
+--password senha \
+--query "SELECT * FROM employees limit 15"
+
+
+--> criar tabelas
+
+$sqoop eval \
+--query "create table ..."
+
+
+--> verificar descrição da tabela
+
+$sqoop eval \
+--query "describe <nometable>"
+
+
+--> Inserir linhas na tabela
+$sqoop eval \
+--query "insert into <nometable> value(campo1,campo2)"
+
+
+----------------------------------------------------------
+-- IMPORTAR TABELAS, COLUNAS OU LINHAS CORRESPONDENTES
+----------------------------------------------------------
+
+--> importar tabela
+sqoop import --table employees \
+...
+
+--> importar somente algumas colunas
+sqoop import ...
+--columns "id, last_name"
+
+
+--> utilizando where para importar somente as linhas correspondentes
+sqoop import ...
+--where "state='SP'"

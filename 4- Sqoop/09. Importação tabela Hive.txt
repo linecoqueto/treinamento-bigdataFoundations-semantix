@@ -1,0 +1,22 @@
+-------- >>  Importação Tabela Hive << -------- 
+
+--hive-import : importar tabela para o hive
+
+--hive-overwrite : sobrescrever os dados se a tabela hive existir
+
+--create-hive-table : o job irá falhar se uma tabela hive existir
+
+--hive-table : especificar o nome da tabela hive
+				--hive-table <db_name>.<table_name>
+				
+
+--- Exemplo ---
+
+sqoop import --table employees \
+--connect jdbc:mysql://database/employees \
+--username root \
+--password secret \
+--warehouse-dir=/user/hive/warehouse/teste.db \
+--hive-import \
+--create-hive-table \
+--hive-table teste.user

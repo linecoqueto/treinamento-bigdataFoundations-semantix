@@ -1,0 +1,17 @@
+-------- >> SQOOP JOBS << --------
+--- automatizando as execuções ---
+
+--create <job-id> : criar job-id
+sqoop job --create myjob --import --connect ...
+
+--list: listar jobs salvos
+sqoop job --list
+
+--show <job-id> : ver detalhes do job
+sqoop job --show myjob
+
+--exec <job-id> : executar job
+sqoop job --exec myjob
+
+--delete <job-id> : deletar jov
+sqoop job --delete myjob

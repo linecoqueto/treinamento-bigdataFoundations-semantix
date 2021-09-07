@@ -1,0 +1,95 @@
+
+##---------------------------------------------------------------
+#1. Importar a tabela employees.titles do MySQL para o diretório /user/aluno/<nome>/data com 1 mapeador.
+##---------------------------------------------------------------
+
+sqoop import --table titles \
+--connect jdbc:mysql://database/employees \
+--username root \
+--password secret \
+--warehouse-dir /user/aluno/aline/data \
+--m 1
+
+
+root@namenode:/# hdfs dfs -ls /user/aluno/aline/data/titles
+Found 2 items
+-rw-r--r--   3 root supergroup          0 2021-09-07 14:14 /user/aluno/aline/data/titles/_SUCCESS
+-rw-r--r--   3 root supergroup   17718376 2021-09-07 14:14 /user/aluno/aline/data/titles/part-m-00000
+
+
+##---------------------------------------------------------------
+#2. Importar a tabela employees.titles do MySQL para uma tabela Hive no banco de dados seu nome com 1 mapeador.
+##---------------------------------------------------------------
+
+sqoop import --table titles \
+--connect jdbc:mysql://database/employees \
+--username root \
+--password secret \
+--m 1 \
+--hive-import \
+--hive-table db_aline.titles
+
+root@namenode:/# hdfs dfs -ls /user/hive/warehouse/db_aline.db/titles
+Found 1 items
+-rwxrwxr-x   3 root supergroup   17718376 2021-09-07 14:27 /user/hive/warehouse/db_aline.db/titles/part-m-00000
+
+
+##---------------------------------------------------------------
+#3. Selecionar os 10 primeiros registros da tabela titles no Hive.
+##---------------------------------------------------------------
+
+0: jdbc:hive2://localhost:10000> select * from titles limit 10;
++----------------+------------------+-------------------+-----------------+
+| titles.emp_no  |   titles.title   | titles.from_date  | titles.to_date  |
++----------------+------------------+-------------------+-----------------+
+| 10001          | Senior Engineer  | 1986-06-26        | 9999-01-01      |
+| 10002          | Staff            | 1996-08-03        | 9999-01-01      |
+| 10003          | Senior Engineer  | 1995-12-03        | 9999-01-01      |
+| 10004          | Engineer         | 1986-12-01        | 1995-12-01      |
+| 10004          | Senior Engineer  | 1995-12-01        | 9999-01-01      |
+| 10005          | Senior Staff     | 1996-09-12        | 9999-01-01      |
+| 10005          | Staff            | 1989-09-12        | 1996-09-12      |
+| 10006          | Senior Engineer  | 1990-08-05        | 9999-01-01      |
+| 10007          | Senior Staff     | 1996-02-11        | 9999-01-01      |
+| 10007          | Staff            | 1989-02-10        | 1996-02-11      |
++----------------+------------------+-------------------+-----------------+
+10 rows selected (5.195 seconds)
+
+
+##---------------------------------------------------------------
+#4. Deletar os registros da tabela employees.titles do MySQL e verificar se foram apagados, através do Sqoop
+##---------------------------------------------------------------
+
+sqoop eval \
+--connect jdbc:mysql://database/employees \
+--username root \
+--password secret \
+--query "truncate table employees.titles"
+
+
+sqoop eval \
+--connect jdbc:mysql://database/employees \
+--username root \
+--password secret \
+--query "select * from employees.titles"
+
+##---------------------------------------------------------------
+#5. Exportar os dados do diretório /user/hive/warehouse/<nome>.db/data/titles para a tabela do MySQL  employees.titles.
+##---------------------------------------------------------------
+
+sqoop export --table titles \
+--connect jdbc:mysql://database/employees \
+--username root \
+--password secret \
+--export-dir /user/hive/warehouse/db_aline.db/data/titles
+			 
+
+##---------------------------------------------------------------
+#6. Selecionar os 10 primeiros registros registros da tabela employees.titles do MySQL.
+##---------------------------------------------------------------
+
+sqoop eval \
+--connect jdbc:mysql://database/employees \
+--username root \
+--password secret \
+--query "select * from employees.titles"

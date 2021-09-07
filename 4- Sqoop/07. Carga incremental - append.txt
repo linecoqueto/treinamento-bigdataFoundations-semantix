@@ -1,0 +1,22 @@
+------------ >> CARGA INCREMENTAL - APPEND << ------------
+-- Anexar dados em um conjunto de dados existentes no HDFS
+
+---> Anexar todos os dados
+sqoop import ... --append --where 'where 'id_venda >10'
+
+---> Anexar apenas os novos dados (incremental)
+---  não sobrescreve os dados, em relação a uma coluna e 
+---  um valor exclusivo crescente.
+sqoop import ... --incremental append \
+--check-column id_venda \
+--last-value 50
+
+---> Atualizar apenas os novos dados (incremental)
+---  sobrescreve os dados, em relaão a uma coluna e um
+---  um valor de data e hora
+---  Adicionar o atributo -merge-key (coluna e um valor 
+---  exclusivo crescente
+sqoop import ... --incremental lastmodified \
+--merge-key data_id \
+--check-column data_venda \
+--last-value '2021-01-18'
