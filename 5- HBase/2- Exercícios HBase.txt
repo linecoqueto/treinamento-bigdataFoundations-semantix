@@ -1,0 +1,141 @@
+##---------------------------------------------------------------
+#1. Criar a tabela ‘controle’ 
+##---------------------------------------------------------------
+
+hbase(main):010:0> create 'controle',{NAME=>'produto'},{NAME=>'fornecedor'}
+
+0 row(s) in 2.5460 seconds
+=> Hbase::Table - controle
+
+--
+
+put 'controle','1','produto:nome','ram'
+put 'controle','2','produto:nome','hd'
+put 'controle','3','produto:nome','mouse'
+
+put 'controle','1','produto:qtd','100'
+put 'controle','2','produto:qtd','50'
+put 'controle','2','produto:qtd','150'
+
+put 'controle','1','fornecedor:nome','TI Comp'
+put 'controle','2','fornecedor:nome','Peças PC'
+put 'controle','3','fornecedor:nome','Inf Tec'
+
+put 'controle','1','fornecedor:estado','SP'
+put 'controle','2','fornecedor:estado','MG'
+put 'controle','3','fornecedor:estado','SP'
+
+
+
+##---------------------------------------------------------------
+#2. Listar as tabelas e verificar a estrutura da tabela ‘controle’
+##---------------------------------------------------------------
+
+hbase(main):038:0> list
+TABLE                                                                                                                           
+controle                                                                                                                        
+1 row(s) in 0.0710 seconds
+
+=> ["controle"]
+
+--
+
+hbase(main):039:0> describe 'controle'
+Table controle is ENABLED                                                                                                       
+controle                                                                                                                        
+COLUMN FAMILIES DESCRIPTION                                                                                                     
+{NAME => 'fornecedor', BLOOMFILTER => 'ROW', VERSIONS => '1', IN_MEMORY => 'false', KEEP_DELETED_CELLS => 'FALSE', DATA_BLOCK_EN
+CODING => 'NONE', TTL => 'FOREVER', COMPRESSION => 'NONE', MIN_VERSIONS => '0', BLOCKCACHE => 'true', BLOCKSIZE => '65536', REPL
+ICATION_SCOPE => '0'}    
+                                                                                                       
+{NAME => 'produto', BLOOMFILTER => 'ROW', VERSIONS => '1', IN_MEMORY => 'false', KEEP_DELETED_CELLS => 'FALSE', DATA_BLOCK_ENCOD
+ING => 'NONE', TTL => 'FOREVER', COMPRESSION => 'NONE', MIN_VERSIONS => '0', BLOCKCACHE => 'true', BLOCKSIZE => '65536', REPLICA
+TION_SCOPE => '0'}                                                                                                              
+2 row(s) in 0.2140 seconds
+
+##---------------------------------------------------------------
+#3. Contar o número de registros da tabela ‘controle’
+##---------------------------------------------------------------
+
+hbase(main):041:0> count 'controle'
+3 row(s) in 0.0560 seconds
+
+=> 3
+
+
+##---------------------------------------------------------------
+#4. Alterar  a família de coluna produto para 3 versões
+##---------------------------------------------------------------
+
+hbase(main):042:0> alter 'controle',{NAME=>'produto', VERSIONS=>3}
+
+Updating all regions with the new schema...
+0/1 regions updated.
+1/1 regions updated.
+Done.
+0 row(s) in 3.2080 seconds
+
+
+##---------------------------------------------------------------
+#5. Alterar a quantidade para 200 do id 2
+##---------------------------------------------------------------
+
+hbase(main):044:0> put 'controle','2','produto:qtd','200'
+0 row(s) in 0.0780 seconds
+
+##---------------------------------------------------------------
+#6. Pesquisar as versões do id 2  da coluna quantidade
+##---------------------------------------------------------------
+
+hbase(main):049:0> get 'controle','2',{COLUMNS=>'produto', VERSION=>2}
+
+COLUMN                            CELL                                                                                          
+ produto:nome                     timestamp=1631112233383, value=hd                                                             
+ produto:qtd                      timestamp=1631112890346, value=200                                                            
+2 row(s) in 0.0670 seconds
+
+
+hbase(main):050:0> get 'controle','2',{COLUMNS=>['produto:qtd','fornecedor:nome'], VERSION=>2}
+COLUMN                            CELL                                                                                          
+ fornecedor:nome                  timestamp=1631112396350, value=Pe\xC3\xA7as PC                                                
+ produto:qtd                      timestamp=1631112890346, value=200                                                            
+2 row(s) in 0.0530 seconds
+
+
+##---------------------------------------------------------------
+#7. Excluir os id do estado de SP
+##---------------------------------------------------------------
+
+scan 'controle',{COLUMNS=>'fornecedor:estado', LIMIT=>3}
+scan 'controle',{COLUMNS=>'fornecedor:estado', LIMIT=>3, FILTER => "ValueFilter(= 'binary:SP')"}
+
+
+hbase(main):058:0* deleteall 'controle','1'
+0 row(s) in 0.1420 seconds
+
+hbase(main):001:0> deleteall 'controle','3'
+0 row(s) in 0.7250 seconds
+
+
+hbase(main):002:0> count 'controle'
+1 row(s) in 0.0930 seconds
+=> 1
+
+
+##---------------------------------------------------------------
+#8. Deletar a coluna estado da chave 2
+##---------------------------------------------------------------
+
+hbase(main):003:0> delete 'controle','2','fornecedor:estado'
+0 row(s) in 0.0820 seconds
+
+##---------------------------------------------------------------
+#9. Pesquisar toda a tabela controle
+##---------------------------------------------------------------
+
+hbase(main):004:0> scan 'controle'
+ROW                               COLUMN+CELL                                                                                   
+ 2                                column=fornecedor:nome, timestamp=1631112396350, value=Pe\xC3\xA7as PC                        
+ 2                                column=produto:nome, timestamp=1631112233383, value=hd                                        
+ 2                                column=produto:qtd, timestamp=1631112890346, value=200                                        
+1 row(s) in 0.0560 seconds

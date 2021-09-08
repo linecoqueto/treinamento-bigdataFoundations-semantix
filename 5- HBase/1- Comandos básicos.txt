@@ -1,0 +1,169 @@
+----------------------------------------------------------
+-- COMANDOS BÁSICOS
+----------------------------------------------------------
+
+---> Inicializar
+docker exec -it hbase-master
+
+hbase shell
+
+
+---> Status do HBase - numero de servidores
+status
+
+
+---> versão do hbase
+version
+
+
+---> Ajuda sobre comandos de tabelas
+table_help 
+
+
+---> whoami
+informações sobre o usuário
+
+
+---> Ajuda sobre o comando
+help "comando"
+
+
+----------------------------------------------------------
+-- MANIPULAÇÃO DE TABELA
+----------------------------------------------------------
+
+---> criar tabelas : definir nome das familias de coluna
+
+create 'nomeTablela',{NAME=>'familia'},{NAME=>'familia'}
+create 'nomeTabela','familia','familia'
+
+create 'clientes',{NAME=>'endereco',VERSION=>2},{NAME=>'pedido'}
+create 'clientes','endereco','pedido'
+
+---> listar as tabelas
+list 
+
+---> Verificar estrutura da tabela
+describe 'nomeTabela'
+
+describe 'clientes'
+
+
+---> Deletar tabela (precisa desabilitar)
+drop 'nomeTabela' 
+drop_all 'c.*'
+
+drop 'clientes'
+
+
+---> Verificar se a tabela existe/tabelas desabilitadas
+exists 'nomeTabela'
+
+
+---> desabilitar tabela
+disable 'nomeTabela'
+scan 'nomeTabela' (erro)
+disable_all 'r.*'
+
+
+---> Verificar se uma tabela esta desabilitada
+ is_disable 'nomeTabela'
+
+
+---> Habilitar tabela
+enable 'nomeTabela'
+
+
+---> Verificar se uma tabela está habilitada
+is_enabled 'nomeTabela'
+
+
+---> Desabilitar e recriar tabela
+truncate 'nomeTabela'
+
+
+----------------------------------------------------------
+-- MANIPULAÇÃO DOS DADOS DA TABELA
+----------------------------------------------------------
+
+---> Inserir dados
+put 'nomeTabela','chave','familia:coluna','valor'
+
+put 'clientes','emiranda','endereco:cidade','BH'
+put 'clientes','emiranda','endereco:estado','MG'
+put 'clientes','emiranda','pedido:data','2/2/2016'
+put 'clientes','emiranda','pedido:nitem','1234D'
+
+
+---> Alterar dados
+put 'clientes','emiranda','pedido:nitem','1234A'
+
+
+---> Consultas de valores, colunas ou familias de colunas - pela CHAVE
+
+--pela chave
+get 'nomeTabela','chave'
+get 'clientes','emiranda'
+
+--pela familia de colunas
+get 'nomeTabela','chave','{COLUMNS=>['familia']}'
+get 'clientes','emiranda','{COLUMNS=>['endereco']}'
+
+--pela coluna
+get 'nomeTabela','chave','{COLUMNS=>['familia:coluna']}'
+get 'clientes','emiranda','{COLUMNS=>['endereco:cidade']}'
+
+
+---> Consultas de valores, colunas ou familias de colunas - pela TABELA
+
+--consultar todas as linhas e colunas da tabela
+scan 'nomeTabela'
+scan 'clientes'
+
+--consultar todas as linhas e colunas da tabela
+scan 'nomeTabela',{COLUMNS=>['familia']}
+scan 'clientes',{COLUMNS=>['endereco']}
+
+--consultar todas as linhas da tabela pela coluna
+scan 'nomeTabela',{COLUMNS=>['familia:coluna']}
+scan 'clientes',{COLUMNS=>['endereco:cidade']}
+
+--consultar todas as linhas da tabela pela versão de uma coluna
+scan 'nomeTabela',{COLUMNS=>['familia:valor']}
+scan 'clientes',{COLUMNS=>['pedido:nitem'], VERSION=>5}
+
+--consultar todas as linhas da tabela pela chave
+scan 'nomeTabela',{STARTROW=>'chave', COLUMNS=>['familia:valor']}
+scan 'clientes',{STARTROW=>'emi', COLUMNS=>['endereco']}
+
+
+---> Deletar dados
+
+--deletar coluna
+delete 'nomeTabela','chave','familia:coluna'
+delete 'clientes','emiranda','endereco:cidade'
+
+--deletar familia de coluna
+delete 'nomeTabela','chave','familia'
+delete 'clientes','emiranda','endereco'
+
+--deletar uma chave
+deleteall 'nomeTabela','chave'
+deleteall 'clientes','emiranda'	
+
+
+---> contar o numero de registros na tabela
+count 'nomeTabela'
+count 'clientes'
+
+----------------------------------------------------------
+-- ALTERAR TABELA
+----------------------------------------------------------
+
+---> Alterar a familia de coluna da tabela
+alter 'nomeTabela',{NAME=>'familia', VERSIONS=>Nº}
+alter 'clientes',{NAME=>'pedido',VERSIONS=>5}
+
+---> Alterar a tabela para deletar a familia de coluna
+alter 'nomeTabela', 'delete'=>'familia'
+alter 'employee','delete'=>'professional'
