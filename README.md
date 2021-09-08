@@ -31,3 +31,8 @@
 - Exportação de dados
 
 #### Hbase
+- Conceitos HBase
+- Comandos básicos
+
+#### Spark
+- Conceitos Spark
