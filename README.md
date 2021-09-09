@@ -36,3 +36,8 @@
 
 #### Spark
 - Conceitos Spark
+- Comandos básicos
+- DataFrames
+- Esquema e Join
+- Api Catalog
+- Sql Queries
