@@ -1,0 +1,69 @@
+#Realizar as seguintes consultas usando SQL queries e transformações de DataFrame na tabela “tab_alunos” no banco de dados <nome>
+
+spark.catalog.listColumns("tab_alunos").show()
+
+##---------------------------------------------------------------
+#1. Visualizar o id e nome dos 5 primeiros registros
+##---------------------------------------------------------------
+
+#--- com spark sql
+scala> spark.sql("select id_discente, nome from tab_alunos limit 5").show()
++-----------+--------------------+
+|id_discente|                nome|
++-----------+--------------------+
+|      18957|ABELARDO DA SILVA...|
+|        553| ABIEL GODOY MARIANO|
+|      17977|ABIGAIL ANTUNES S...|
+|      16613|ABIGAIL FERNANDA ...|
+|      17398|ABIGAIL JOSIANE R...|
++-----------+--------------------+
+
+#--- outra forma de fazer - com dataframe
+scala> val alunosHiveDF = spark.read.table("tab_alunos")
+alunosHiveDF: org.apache.spark.sql.DataFrame = [id_discente: int, nome: string ... 5 more fields]
+
+scala> alunosHiveDF.select("id_discente", "nome").limit(5).show
++-----------+--------------------+
+|id_discente|                nome|
++-----------+--------------------+
+|      18957|ABELARDO DA SILVA...|
+|        553| ABIEL GODOY MARIANO|
+|      17977|ABIGAIL ANTUNES S...|
+|      16613|ABIGAIL FERNANDA ...|
+|      17398|ABIGAIL JOSIANE R...|
++-----------+--------------------+
+
+##---------------------------------------------------------------
+#2. Visualizar o id, nome e ano quando o ano de ingresso for maior ou igual a 2018
+##---------------------------------------------------------------
+
+#--- com spark sql
+scala> spark.sql("select id_discente, nome, ano_ingresso from tab_alunos where ano_ingresso >= 2018").show()
+
+#--- outra forma de fazer - com dataframe
+scala> alunosHiveDF.select("id_discente", "nome", "ano_ingresso").where("ano_ingresso >= 2018").show
+
+
+##---------------------------------------------------------------
+#3. Visualizar por ordem alfabética do nome o id, nome e ano quando o ano de ingresso for maior ou igual a 2018
+##---------------------------------------------------------------
+
+#--- com spark sql
+scala> spark.sql("select id_discente, nome, ano_ingresso from tab_alunos where ano_ingresso >= 2018 order by nome desc").show()
+
+#--- outra forma de fazer - com dataframe
+scala> alunosHiveDF.select("id_discente", "nome", "ano_ingresso").where("ano_ingresso >= 2018").orderBy($"nome".desc).show
+
+
+
+##---------------------------------------------------------------
+#4. Contar a quantidade de registros do item anterior
+##---------------------------------------------------------------
+
+#--- com spark sql
+scala> spark.sql("select count(id_discente) from tab_alunos where ano_ingresso >= 2018").show()
+
+#--- outra forma de fazer - com dataframe
+scala> alunosHiveDF.select("id_discente", "nome", "ano_ingresso").where("ano_ingresso >= 2018").orderBy($"nome".desc).count
+
+

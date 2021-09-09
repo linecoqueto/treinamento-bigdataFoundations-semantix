@@ -1,0 +1,154 @@
+
+
+--------------------------------------------------------------
+-- foi necessário fazer o download e mover arquivo para o arquivo
+-- para o container do spark. Se matar meu cluster, vou precisar 
+-- fazer de novo, caso contrário, não é necessário.
+
+aline@aline-virtualbox:~/treinamentos/docker-bigdata$ curl -O https://repo1.maven.org/maven2/com/twitter/parquet-hadoop-bundle/1.6.0/parquet-hadoop-bundle-1.6.0.jar
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 2731k  100 2731k    0     0  1604k      0  0:00:01  0:00:01 --:--:-- 1604k
+aline@aline-virtualbox:~/treinamentos/docker-bigdata$ docker cp parquet-hadoop-bundle-1.6.0.jar spark:/opt/spark/jars
+--------------------------------------------------------------
+
+----------------------------------------------------------
+-- ACESSAR O SPARK
+----------------------------------------------------------
+
+---> Inicializar e acessar o spark:
+aline@aline-virtualbox:~/treinamentos/docker-bigdata$ docker exec -it spark bash
+
+root@spark:/# spark-shell
+
+---> para sair do spark:
+
+scala> :q
+root@spark:/# exit
+
+----------------------------------------------------------
+-- CRIAR UM DATAFRAME
+----------------------------------------------------------
+
+---> criar um dataframe para leitura de arquivo
+val <dataframe> = spark.read.<formato>("<arquivo>")
+
+- <formato>:
+* textfile("arquivo.txt")
+* csv("arquivo.csv")
+* jdbc(jdbcURL, "db.tabela", connectionProperties)
+* load ou parquet("arquivo.parquet")
+* table("tabelaHive")
+* json("arquivo.json")
+* orc("arquivo.ord")
+
+- <arquivo>
+* "diretorio/"
+* "diretorio/*.log"
+* "arq1.txt, arq2.txt"
+* "arq*"
+
+
+var <dataframe> = spark.read.format("<formato>").load("<arquivo>")
+
+- opções para configurar o arquivo de leitura:
+* spark.read.option(...)
+
+
+- Exemplos
+scala> val userDF = spark.read.json("user.json")
+scala> val userDF = spark.read.format("json").load("usr.json")
+
+
+----------------------------------------------------------
+-- DATAFRAME - AÇÕES :: OPERAÇÕES 
+----------------------------------------------------------
+
+---> AÇÃO 
+
+* count : retorna o numero de linhas
+* first : retorna a primeira linhas
+* take(n) : retorna as primeiras n linhas como um array
+* show(n) : exibe as primeiras n linhas da tabela
+* collect : trazer toda a informação dos nós do drive (cuidado para não estourar a memoria)
+* distincts : retorna os registros, removendo os repetidos
+* write : salvar os dados
+* printSchema() : visualizar a estrutura dos dados (dataFrame sempre tem um esquema associado)
+
+---> EXECUTAR A AÇÃO
+
+<dataFrame>.<acao> 
+
+scala> val clienteDF = spark.read.json("cliente.json")
+scala> clienteDF.count()
+
+
+---> SALVAR DADO
+
+* dadosDF.write
+	- save("arquivoParquet")
+	- json("arquivojson")
+	- csv("arquivocsv")
+	- saveAsTable("tableHive") 
+		-- (/user/hive/warehouse)
+		
+scala> dadosDF.write.save("outputData")
+
+scala> dadosDF.write \
+mode("append"). \
+option("path","/user/root"). \
+saveAsTable("OutputData")
+
+
+
+----------------------------------------------------------
+-- DATAFRAME - TRANSFORMAÇÕES :: OPERAÇÕES 
+----------------------------------------------------------
+
+- Imutáveis : dados no dataframe nunca são modificados
+
+* Select : Selecionar os atributos
+* where : filtrar os atributos
+* orderBy : ordenar os dados por atributo
+* groupBy : agrupar os dados por atributo
+* join : mesclar dados
+* limit(n) : limitar a qtd de registros
+
+
+--> Transformação individual
+<dataframe>.<ação>
+
+--> Sequencia de transformações
+<dataframe>.<ação>.<ação>.<ação>.<ação>
+
+
+scala> val prodQtdDF = prodDF.select("nome","qtd")
+scala> val qtd50DF = prodQtdDF.where("qtd > 50")
+scala> val qtd50ordDF = qtd50DF.orderBy("nome")
+scala> qtd50ordDF.show()
+
+scala> prodDF.select("nome","qtd").where("qtd > 50").orderBy("nome").show()
+
+
+----> groupBy com um função de agregação
+
+* count
+* max
+* min
+* mean
+* sum
+* pivot
+* agg (função de agregação adicional)
+
+scala> peopleDF.groupBY("setor").count()
+scala> peopled.show()
+
+
+----> Acessar o atributo do dados
+* "<atributo>"
+* $"<atributo>"
+* <dataframe>("<atributo>")
+
+scala> prodDF.select("nome","qtd").show()
+scala> prodDF.select($"nome",$"qtd" *0,1).show()
+scala> prodDF.where(prodDF("nome").startsWith("A")).show()

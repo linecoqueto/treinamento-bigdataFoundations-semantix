@@ -1,0 +1,75 @@
+--------------------------------------------------------------
+---------------------- APACHE SPARK --------------------------
+-- Processamento de dados em plataforma de computação em cluster. 
+-- Execução em memória. 
+--------------------------------------------------------------
+
+--> Representação dos dados
+* RDD
+* DATAFRAME
+* DATASET
+
+--> Ferramentas
+* SPARK: ETL e processamento em batch (RDD)
+* Spark SQL: Consultas em dados estruturados
+* Spark Streaming: processamento de stream
+* Spark MLIB: machine learning
+* Spark Graphx: processamento de grafos
+
+--> Acessando via Shell
+* pyspark para Python
+* spark-shell para Scala
+
+--> Dataframe
+* Representacao de dados no spark
+* Ler dados estruturados e semiestruturados em forma tabular.
+* Operações: Transformação e Ação.
+
+--> Esquemas
+* Por padrão todos os dados o spark vai trabalhar como string.
+* O spark pode inferir os esquemas para os dados estruturados (parquet, tabela hive)
+* Spark pode tentar inferir os esquemas para os dados semi estruturados (csv, json)
+* Comando: option("inferSchema","true")
+
+--> Join
+* inner (padrão)
+* outer
+* left_outer
+* right_outer
+* leftsemi
+
+--> Spark SQL queries
+* Realizar consultas com comandos SQL
+	- Tabelas Hive
+	- views de dataframe e dataset
+	- outros formatos de arquivos
+* usar a função SparkSession.sql para executar uma consulta SQL.
+
+--> Consultas - Sql Queries
+* SELECT
+* where
+* group by
+* having
+* order by
+* limit
+* count
+* sum
+* mean
+* as
+* subqueries
+
+--> Views - Sql Queries
+* Posibilidade para executar SQL queries em dataframe e dataset.
+* São temporárias
+	- views regular : usar em apenas uma seção spark
+	- views global : usar em multiplas seções spark atraves de uma aplicação spark
+
+--> Api Catalog
+* Explorar tabelas e gerenciar views.
+* usar spark.catalog
+* Funções:
+	- listDatabases
+	- setcurrentDatabase(nomeDB)
+	- listTables
+	- listColumns(nomeTabela)
+	- dropTempVies(nomeView)
